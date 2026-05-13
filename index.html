@@ -475,6 +475,172 @@
             .sidebar { display: none; }
             .main-content { margin-left: 0; max-width: 100%; }
         }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 280px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideOutRight {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100px); }
+        }
+
+        .toast.toast-exit {
+            animation: slideOutRight 0.3s ease forwards;
+        }
+
+        .toast-success { background: linear-gradient(135deg, #2ed573, #1e9c52); border-left: 4px solid #7bed9f; }
+        .toast-error { background: linear-gradient(135deg, #ff4757, #c0392b); border-left: 4px solid #ff6b81; }
+        .toast-warning { background: linear-gradient(135deg, #ffa502, #e67e22); border-left: 4px solid #ffeaa7; }
+        .toast-info { background: linear-gradient(135deg, #00d4ff, #0097e6); border-left: 4px solid #74b9ff; }
+
+        .toast i { font-size: 18px; }
+        .toast-close { 
+            margin-left: auto; 
+            cursor: pointer; 
+            opacity: 0.7; 
+            font-size: 14px;
+        }
+        .toast-close:hover { opacity: 1; }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-overlay.active { display: flex; }
+
+        .loading-spinner {
+            background: #1a1a1a;
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #333;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text { color: #fff; font-size: 16px; font-weight: 500; }
+        .loading-subtext { color: #666; font-size: 13px; margin-top: 5px; }
+
+        /* Tema Claro */
+        body.light-theme {
+            --dark: #f5f5f5;
+            --card-dark: #ffffff;
+            --input-dark: #f0f0f0;
+            --text-muted: #666;
+            --primary: #0097e6;
+            --primary-dark: #00a8cc;
+            background: #f0f0f0;
+        }
+
+        body.light-theme .sidebar {
+            background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+            border-right: 1px solid #ddd;
+        }
+
+        body.light-theme .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .card:hover { border-color: #bbb; }
+
+        body.light-theme .form-control, 
+        body.light-theme .form-select {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        body.light-theme .form-control:focus, 
+        body.light-theme .form-select:focus {
+            background: #f8f8f8;
+            border-color: var(--primary);
+            color: #333;
+        }
+
+        body.light-theme .exercise-row {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .exercise-field input {
+            background: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        body.light-theme .saved-item {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .template-card {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .menu-item:hover { background: rgba(0, 151, 230, 0.1); }
+        
+        body.light-theme .login-box {
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .modal-content { background: #fff; border: 1px solid #ddd; }
+        body.light-theme .modal-title { color: var(--primary) !important; }
+        body.light-theme .btn-close-white { filter: invert(1); }
     </style>
 </head>
 <style>
@@ -552,6 +718,18 @@
         <i class="fas fa-moon"></i>
     </button>
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Gerando Treino...</div>
+            <div class="loading-subtext">Aguarde um momento</div>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="logo">
             <i class="fas fa-dumbbell"></i> FitFlow Pro
@@ -623,11 +801,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Nome do Aluno</label>
+                        <label class="form-label">Nome do Aluno <span style="color: #ff4757;">*</span></label>
                         <input type="text" class="form-control" id="nome" placeholder="Nome completo">
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Objetivo</label>
+                        <label class="form-label">Objetivo <span style="color: #ff4757;">*</span></label>
                         <select class="form-select" id="objetivo">
                             <option value="">Selecione...</option>
                             <option value="Hipertrofia">Hipertrofia</option>
@@ -688,11 +866,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Nome do Aluno</label>
+                        <label class="form-label">Nome do Aluno <span style="color: #ff4757;">*</span></label>
                         <input type="text" class="form-control" id="nome" placeholder="Nome completo">
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label class="form-label">Objetivo</label>
+                        <label class="form-label">Objetivo <span style="color: #ff4757;">*</span></label>
                         <select class="form-select" id="objetivo">
                             <option value="">Selecione...</option>
                             <option value="Hipertrofia">Hipertrofia</option>
@@ -855,6 +1033,10 @@
                     <h5 class="card-title"><i class="fas fa-cog"></i> Configurações</h5>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Nome do Personal Trainer (出现在PDF)</label>
+                    <input type="text" class="form-control" id="personal-name" placeholder="Seu nome ou academia">
+                </div>
+                <div class="mb-3">
                     <label class="form-label">API Key OpenAI</label>
                     <input type="password" class="form-control" id="api-key" placeholder="sk-...">
                     <small class="text-muted">Usada apenas para gerar treinos com IA</small>
@@ -950,7 +1132,10 @@
             { nome: "Treino C - Perna", desc: "Foco em membros inferiores", exercicios: ["Agachamento com Barra", "Leg Press 45°", "Cadeira Extensora", "Cadeira Flexora", "Afundo (Lunge)", "Elevação de Panturrilha", "Stiff (Stiff Leg Deadlift)", "Prancha Frontal", "Calf Raise", "Russian Twist"] },
             { nome: "Treino D - Hipertrofia Completa", desc: "Treino completo para massa muscular", exercicios: ["Supino Reto com Barra", "Puxada Frontal na Barra", "Agachamento com Barra", "Desenvolvimento com Barra", "Remada Curvada com Barra", "Rosca Direta com Barra", "Tríceps Pulley", "Cadeira Extensora", "Prancha Frontal", "Leg Press 45°"] },
             { nome: "Treino E - Emagrecimento", desc: "Treino para queima de gordura", exercicios: ["Agachamento com Halteres", "Afundo (Lunge)", "Leg Press 45°", "Cadeira Extensora", "Supino Reto com Halteres", "Remada Curvada com Halteres", "Elevação Lateral", "Burpee", "Mountain Climber", "Prancha Frontal"] },
-            { nome: "Treino F - Fuerza", desc: "Foco em força e potência", exercicios: ["Supino Reto com Barra", "Agachamento com Barra", "Terra (Deadlift)", "Desenvolvimento com Barra", "Remada Curvada com Barra", "Stiff", "Puff (Shrug)", "Rosca Inversa", "Prancha Frontal", "Prancha Lateral"] }
+            { nome: "Treino F - Fuerza", desc: "Foco em força e potência", exercicios: ["Supino Reto com Barra", "Agachamento com Barra", "Terra (Deadlift)", "Desenvolvimento com Barra", "Remada Curvada com Barra", "Stiff", "Puff (Shrug)", "Rosca Inversa", "Prancha Frontal", "Prancha Lateral"] },
+            { nome: "Seg/Qua/Sex - Full Body", desc: "3 dias - Treino completo", exercicios: ["Supino Reto com Barra", "Puxada Frontal na Barra", "Agachamento com Barra", "Desenvolvimento com Barra", "Rosca Direta com Barra", "Tríceps Pulley", "Leg Press 45°", "Cadeira Extensora", "Prancha Frontal", "Elevação Lateral"] },
+            { nome: "Ter/Qui/Sáb - Upper/Lower", desc: "4 dias - Superiores e inferiores", exercicios: ["Supino Reto com Barra", "Puxada Frontal na Barra", "Desenvolvimento com Barra", "Remada Curvada com Barra", "Rosca Direta com Barra", "Tríceps Pulley", "Agachamento com Barra", "Leg Press 45°", "Cadeira Extensora", "Cadeira Flexora"] },
+            { nome: "Seg/Ter/Qui - Push/Pull", desc: "3 dias - Push e Pull", exercicios: ["Supino Reto com Barra", "Supino Inclinado com Halteres", "Desenvolvimento com Barra", "Elevação Lateral", "Tríceps Pulley", "Tríceps Testa", "Puxada Frontal na Barra", "Remada Curvada com Barra", "Rosca Direta com Barra", "Puff (Shrug)"] }
         ];
 
         let exerciciosTreino = [];
@@ -1013,7 +1198,21 @@
             if (savedApiKey) {
                 document.getElementById('api-key').value = savedApiKey;
             }
-            // Para usar IA externa, insira sua API key manualmente na aba Configurações
+            
+            // Carregar preferências do usuário
+            const lastObjetivo = localStorage.getItem('fitflow_last_objetivo');
+            const lastNivel = localStorage.getItem('fitflow_last_nivel');
+            const lastNome = localStorage.getItem('fitflow_last_nome');
+            const savedPersonalName = localStorage.getItem('fitflow_personal_name');
+            if (lastObjetivo) document.getElementById('objetivo').value = lastObjetivo;
+            if (lastNivel) document.getElementById('nivel').value = lastNivel;
+            if (lastNome) document.getElementById('nome').value = lastNome;
+            if (savedPersonalName) document.getElementById('personal-name').value = savedPersonalName;
+            
+            // Salvar nome do personal ao alterar
+            document.getElementById('personal-name').addEventListener('change', function() {
+                localStorage.setItem('fitflow_personal_name', this.value);
+            });
             
             adicionarExercicio();
             renderizarBiblioteca();
@@ -1039,6 +1238,21 @@
         function removerExercicio(id) {
             exerciciosTreino = exerciciosTreino.filter(e => e.id !== id);
             renderExercicios();
+        }
+
+        function duplicarExercicio(id) {
+            const ex = exerciciosTreino.find(e => e.id === id);
+            if (ex) {
+                exerciciosTreino.push({
+                    id: Date.now(),
+                    nome: ex.nome,
+                    series: ex.series,
+                    reps: ex.reps,
+                    carga: ex.carga
+                });
+                renderExercicios();
+                showToast('Exercício duplicado!', 'success');
+            }
         }
 
         function renderExercicios() {
@@ -1129,6 +1343,9 @@
                                                     placeholder="kg" onchange="updateExercicio(${ex.id}, 'carga', this.value)">
                                             </div>
                                             <div class="exercise-actions">
+                                                <button class="btn btn-success" style="padding: 6px 8px;" onclick="duplicarExercicio(${ex.id})" title="Duplicar">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
                                                 <button class="btn btn-secondary" style="padding: 6px 8px;" onclick="abrirSubstituir(${idx})" title="Trocar">
                                                     <i class="fas fa-search"></i>
                                                 </button>
@@ -1217,7 +1434,7 @@
             }
             localStorage.setItem('favoritos', JSON.stringify(favoritos));
             renderizarFavoritos();
-            alert(favoritos.includes(nome) ? '❤️ Adicionado aos favoritos!' : '💔 Removido dos favoritos');
+            showToast(favoritos.includes(nome) ? 'Adicionado aos favoritos!' : 'Removido dos favoritos', 'success');
         }
 
         function renderizarFavoritos() {
@@ -1257,7 +1474,7 @@
             }));
             renderExercicios();
             showTab('criar');
-            alert('✅ Template "' + t.nome + '" carregado!');
+            showToast('Template "' + t.nome + '" carregado!', 'success');
         }
 
         function renderizarBiblioteca() {
@@ -1293,7 +1510,7 @@
 
         function salvarTreino() {
             const nomeAluno = document.getElementById('nome').value;
-            if (!nomeAluno) { alert('Informe o nome do aluno!'); return; }
+            if (!nomeAluno) { showToast('Informe o nome do aluno!', 'warning'); return; }
             
             const workout = {
                 id: Date.now(),
@@ -1310,9 +1527,15 @@
             
             workoutsSalvos.push(workout);
             localStorage.setItem('workoutsSalvos', JSON.stringify(workoutsSalvos));
+            
+            // Salvar preferências do usuário
+            localStorage.setItem('fitflow_last_objetivo', document.getElementById('objetivo').value);
+            localStorage.setItem('fitflow_last_nivel', document.getElementById('nivel').value);
+            localStorage.setItem('fitflow_last_nome', document.getElementById('nome').value);
+            
             renderizarTreinosSalvos();
             atualizarEstatisticas();
-            alert('✅ Treino salvo!');
+            showToast('Treino salvo com sucesso!', 'success');
         }
 
         function renderizarTreinosSalvos() {
@@ -1368,7 +1591,7 @@
                 localStorage.setItem('workoutsSalvos', JSON.stringify(workoutsSalvos));
                 renderizarTreinosSalvos();
                 atualizarEstatisticas();
-                alert('✅ Aluno deletado com sucesso!');
+                showToast('Aluno deletado com sucesso!', 'success');
             }
         }
 
@@ -1439,7 +1662,7 @@
 
         function deletarTreino() {
             if (exerciciosTreino.length === 0 && !document.getElementById('nome').value) {
-                alert('Nada para deletar!');
+                showToast('Nada para deletar!', 'info');
                 return;
             }
             
@@ -1454,7 +1677,7 @@
                 document.getElementById('nivel').value = 'Intermediário';
                 document.getElementById('observacoes').value = '';
                 renderExercicios();
-                alert('✅ Treino deletado com sucesso!');
+                showToast('Treino deletado com sucesso!', 'success');
             }
         }
 
@@ -1468,15 +1691,21 @@
             const dias = document.getElementById('dias').value;
             const nivel = document.getElementById('nivel').value;
             const obs = document.getElementById('observacoes').value;
+            const personalName = document.getElementById('personal-name').value || '';
             
             doc.setFillColor(20, 20, 20);
             doc.rect(0, 0, 210, 45, 'F');
             doc.setTextColor(0, 212, 255);
             doc.setFontSize(28);
-            doc.text('FITFLOW PRO', 105, 22, { align: 'center' });
-            doc.setFontSize(12);
+            doc.text('FITFLOW PRO', 105, 18, { align: 'center' });
+            if (personalName) {
+                doc.setFontSize(10);
+                doc.setTextColor(255, 255, 255);
+                doc.text(personalName, 105, 28, { align: 'center' });
+            }
+            doc.setFontSize(11);
             doc.setTextColor(255, 255, 255);
-            doc.text('Programa de Treinamento Personalizado', 105, 35, { align: 'center' });
+            doc.text('Programa de Treinamento Personalizado', 105, 38, { align: 'center' });
             
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(14);
@@ -1592,7 +1821,7 @@
             texto += `\n✅ *FitFlow Pro*`;
             
             navigator.clipboard.writeText(texto).then(() => {
-                alert('✅ Treino copiado! Agora cole no WhatsApp');
+                showToast('Treino copiado! Cole no WhatsApp', 'success');
                 adicionarAoHistorico('WhatsApp');
             });
         }
@@ -1698,7 +1927,7 @@
             treino = treino.slice(0, 12);
             
             if (treino.length === 0) {
-                alert('Não foi possível gerar o treino. Use um template!');
+                showToast('Não foi possível gerar o treino. Use um template!', 'error');
                 return;
             }
             
@@ -1718,17 +1947,67 @@
                 return ex ? ex.grupo : 'Outros';
             }))];
             
-            alert(`✅ Treino gerado!\n\nObjetivo: ${objetivo}\nNível: ${nivel}\nExercícios: ${exerciciosTreino.length}\nGrupos: ${gruposTrabalhados.join(', ')}`);
+            showToast(`Treino gerado! ${exerciciosTreino.length} exercícios`, 'success');
         }
 
         // Gerenciador de IA (tenta OpenAI se tiver key, senão usa local)
         async function gerarTreinoIA() {
-            // Primeiro tenta o gerador local (sempre funciona)
-            gerarTreinoLocal();
+            const overlay = document.getElementById('loading-overlay');
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                gerarTreinoLocal();
+                overlay.classList.remove('active');
+            }, 800);
         }
 
+        let isDarkTheme = true;
+
         function toggleTheme() {
-            alert('Tema claro em breve! Por enquanto use o tema escuro.');
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('light-theme', !isDarkTheme);
+            localStorage.setItem('fitflow_theme', isDarkTheme ? 'dark' : 'light');
+            
+            const icon = document.querySelector('.theme-toggle i');
+            icon.className = isDarkTheme ? 'fas fa-moon' : 'fas fa-sun';
+            
+            showToast(isDarkTheme ? 'Tema escuro ativado' : 'Tema claro ativado', 'info');
+        }
+
+        // Carregar tema salvo
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('fitflow_theme');
+            if (savedTheme === 'light') {
+                isDarkTheme = false;
+                document.body.classList.add('light-theme');
+                document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+            }
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const icons = {
+                'success': 'fas fa-check-circle',
+                'error': 'fas fa-times-circle',
+                'warning': 'fas fa-exclamation-triangle',
+                'info': 'fas fa-info-circle'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="${icons[type]}"></i>
+                <span>${message}</span>
+                <span class="toast-close" onclick="this.parentElement.remove()">&times;</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
     </script>
 </body>
