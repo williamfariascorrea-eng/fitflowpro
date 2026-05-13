@@ -1786,75 +1786,84 @@
             const dias = parseInt(document.getElementById('dias').value) || 5;
             const nivel = document.getElementById('nivel').value || 'Intermediário';
             
+            // Função para embaralhar array
+            const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
+            
             // Configurações por objetivo
             const configs = {
-                'Hipertrofia': { series: '4', reps: '8-12', carga: 'Moderada' },
-                'Força': { series: '5', reps: '4-6', carga: 'Alta' },
-                'Emagrecimento': { series: '3', reps: '15-20', carga: 'Baixa-Moderada' },
-                'Condicionamento': { series: '3', reps: '20-25', carga: 'Baixa' },
-                'Definição': { series: '3', reps: '12-15', carga: 'Moderada' }
+                'Hiertrofia': { seriesMin: 3, seriesMax: 4, repsMin: 8, repsMax: 12, carga: 'Moderada' },
+                'Força': { seriesMin: 4, seriesMax: 5, repsMin: 4, repsMax: 6, carga: 'Alta' },
+                'Emagrecimento': { seriesMin: 3, seriesMax: 3, repsMin: 15, repsMax: 20, carga: 'Baixa-Moderada' },
+                'Condicionamento': { seriesMin: 2, seriesMax: 3, repsMin: 20, repsMax: 25, carga: 'Baixa' },
+                'Definição': { seriesMin: 3, seriesMax: 3, repsMin: 12, repsMax: 15, carga: 'Moderada' }
             };
             
-            const config = configs[objetivo] || configs['Hipertrofia'];
+            // Ajuste para nome correto
+            const configKey = objetivo === 'Hipertrofia' ? 'Hipertrofia' : objetivo;
+            let config = configs[configKey] || configs['Hipertrofia'];
             
-            // Músculos por dia da semana
-            const grupos = [
-                ['Peito', 'Ombro', 'Braço'],
-                ['Costas', 'Braço'],
-                ['Perna', 'Core'],
-                ['Peito', 'Ombro'],
-                ['Costas', 'Perna'],
-                ['Perna', 'Peito', 'Core']
-            ];
+            // Ajustes por nível
+            if (nivel === 'Iniciante') {
+                config = { seriesMin: 2, seriesMax: 3, repsMin: 12, repsMax: 15, carga: 'Leve' };
+            } else if (nivel === 'Avançado') {
+                config = { seriesMin: 4, seriesMax: 5, repsMin: 6, repsMax: 10, carga: 'Pesada' };
+            }
+            
+            // Grupos musculares disponíveis - com mais combinações
+            const gruposMusculares = ['Peito', 'Costas', 'Perna', 'Ombro', 'Braço', 'Core'];
             
             let treino = [];
-            const numDias = Math.min(dias, grupos.length);
             
-            // Selecionar exercícios para cada dia
+            // Embaralhar ordem dos grupos musculares
+            const gruposOrdenados = shuffle([...gruposMusculares]);
+            const numDias = Math.min(dias, 6);
+            
+            // Para cada "dia" (conjunto de exercícios), selecionar grupos diferentes
             for (let d = 0; d < numDias; d++) {
-                const musculosDia = grupos[d];
+                // Selecionar 3 grupos musculares aleatórios por dia
+                const gruposDoDia = shuffle([...gruposMusculares]).slice(0, 3);
                 
-                musculosDia.forEach(grupo => {
+                gruposDoDia.forEach(grupo => {
                     const exerciciosDoGrupo = exerciciosDB.filter(e => e.grupo === grupo);
                     
-                    // Filtrar por nível
+                    if (exerciciosDoGrupo.length === 0) return;
+                    
+                    // Filtrar por nível se possível
                     let disponibilidade = exerciciosDoGrupo;
                     if (nivel === 'Iniciante') {
-                        disponibilidade = exerciciosDoGrupo.filter(e => e.nivel === 'Iniciante');
-                        if (disponibilidade.length < 2) disponibilidade = exerciciosDoGrupo;
+                        const iniciantes = exerciciosDoGrupo.filter(e => e.nivel === 'Iniciante');
+                        if (iniciantes.length > 0) disponibilidade = iniciantes;
+                    } else if (nivel === 'Avançado') {
+                        const avancados = exerciciosDoGrupo.filter(e => e.nivel !== 'Iniciante');
+                        if (avancados.length > 0) disponibilidade = avancados;
                     }
                     
-                    // Pegar 2-3 exercícios por grupo muscular
-                    const selecionados = disponibilidade.slice(0, Math.min(3, disponibilidade.length));
+                    // Embaralhar exercícios disponíveis
+                    const exerciciosEmbaralhados = shuffle([...disponibilidade]);
                     
-                    selecionados.forEach(ex => {
-                        // Ajustar series/reps conforme objetivo
-                        let series = config.series;
-                        let reps = config.reps;
-                        let carga = config.carga;
+                    // Pegar 1-2 exercícios aleatórios por grupo
+                    const qtdExercicios = Math.floor(Math.random() * 2) + 1;
+                    
+                    for (let i = 0; i < qtdExercicios && i < exerciciosEmbaralhados.length; i++) {
+                        const ex = exerciciosEmbaralhados[i];
                         
-                        // Ajustes específicos por nível
-                        if (nivel === 'Iniciante') {
-                            series = '3';
-                            reps = '12-15';
-                            carga = 'Leve';
-                        } else if (nivel === 'Avançado') {
-                            series = parseInt(config.series) + 1 || 5;
-                            carga = 'Pesada';
-                        }
+                        // Gerar séries e reps aleatórios dentro do rango
+                        const series = Math.floor(Math.random() * (config.seriesMax - config.seriesMin + 1)) + config.seriesMin;
+                        const reps = Math.floor(Math.random() * (config.repsMax - config.repsMin + 1)) + config.repsMin;
                         
                         treino.push({
                             nome: ex.nome,
-                            series: series,
-                            reps: reps,
-                            carga: carga
+                            series: series.toString(),
+                            reps: reps.toString(),
+                            carga: config.carga
                         });
-                    });
+                    }
                 });
             }
             
-            // Limitar a 12 exercícios por treino
-            treino = treino.slice(0, 12);
+            // Limitar a 10-14 exercícios por treino
+            const limite = Math.floor(Math.random() * 5) + 10; // 10-14
+            treino = treino.slice(0, limite);
             
             if (treino.length === 0) {
                 showToast('Não foi possível gerar o treino. Use um template!', 'error');
